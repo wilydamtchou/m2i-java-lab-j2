@@ -31,6 +31,7 @@ public class M2iBankApplication {
 
         bankService.deposer(crJohn.getNumeroCompte(), 1000.0);
         bankService.deposer(crDupont.getNumeroCompte(), 1500.0);
+        bankService.retirer(crDupont.getNumeroCompte(), 700.0);
         
         crJohn.afficherDetails();
         crDupont.afficherDetails();

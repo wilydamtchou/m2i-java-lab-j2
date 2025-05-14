@@ -74,11 +74,6 @@ public class BankService implements IBankService {
                           .findFirst()
                           .orElseThrow(() -> new NoSuchElementException("Compte introuvable"));
         
-        if (type.equals(TypeTransaction.DEBIT))
-        	compte.retirer(montant);
-        else
-        	compte.deposer(montant);
-        
         Transaction tx = transactionService.creerTransaction(compte, montant, type);
         
         listTx.add(tx);

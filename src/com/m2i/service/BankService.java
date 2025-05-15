@@ -11,6 +11,7 @@ import com.m2i.compte.TypeCompte;
 import com.m2i.dto.CompteDTO;
 import com.m2i.dto.Report;
 import com.m2i.dto.TransactionSummary;
+import com.m2i.exception.TypeInvalideException;
 import com.m2i.transaction.Transaction;
 import com.m2i.transaction.TypeTransaction;
 
@@ -56,15 +57,17 @@ public class BankService implements IBankService {
     }
 
     @Override
-    public Compte creerCompte(String clientId, TypeCompte type) {
+    public Compte creerCompte(String clientId, TypeCompte type) throws TypeInvalideException {
         Client c = clients.get(clientId);
         if (c == null) throw new NoSuchElementException("Client inconnu");
 
         Compte compte;
         if (type == TypeCompte.COURANT)
             compte = new CompteCourant(c, 0);
-        else
+        else if(type == TypeCompte.EPARGNE)
             compte = new CompteEpargne(c, 0.02);
+        else
+        	throw new TypeInvalideException(type);
 
         comptesParClient.get(clientId).add(compte);
         txParCompte.put(compte.getNumeroCompte(), new ArrayList<>());

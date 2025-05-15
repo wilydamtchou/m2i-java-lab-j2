@@ -8,9 +8,16 @@ import com.m2i.compte.CompteUtils;
 import com.m2i.compte.TypeCompte;
 import com.m2i.dto.Report;
 import com.m2i.dto.TransactionSummary;
+import com.m2i.exception.TypeInvalideException;
 import com.m2i.service.BankService;
 import com.m2i.service.IBankService;
 import com.m2i.transaction.Transaction;
+
+class MonException extends Exception {
+    public MonException(String message) {
+        super(message);
+    }
+}
 
 public class M2iBankApplication {
     public static void main(String[] args) {
@@ -25,9 +32,23 @@ public class M2iBankApplication {
                 }
             }
         });
-
+        
         Client dupont = bankService.creerClient("Dupont", "Jean", "jean.dupont@example.com", "+33612345678");
-        CompteCourant crDupont = (CompteCourant) bankService.creerCompte(dupont.getId(), TypeCompte.COURANT);
+        
+        CompteCourant crDupont = null;
+        
+        try {
+        	 crDupont = (CompteCourant) bankService.creerCompte(dupont.getId(), TypeCompte.PEL);
+        } catch (NullPointerException ex) {
+        	System.out.print("erreur de creation");
+        } catch (TypeInvalideException ex) {
+        	System.out.print("erreur de creation");
+        }  finally {
+        	if (crDupont == null) {
+        		return;
+        	}
+        }
+        
 
         // Dépôts/retraits déclenchent les notifications
         bankService.deposer(crDupont.getNumeroCompte(), 1500.0);

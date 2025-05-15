@@ -8,6 +8,7 @@ import com.m2i.compte.TypeCompte;
 import com.m2i.dto.CompteDTO;
 import com.m2i.dto.Report;
 import com.m2i.dto.TransactionSummary;
+import com.m2i.exception.TypeInvalideException;
 import com.m2i.service.BankService.TransactionListener;
 import com.m2i.transaction.Transaction;
 import com.m2i.transaction.TypeTransaction;
@@ -17,7 +18,7 @@ public interface IBankService {
     public abstract Client creerClient(String nom, String prenom, String email, String telephone);
 
     /** UC2 : Créer un compte pour un client */
-    public abstract Compte creerCompte(String clientId, TypeCompte type);
+    public abstract Compte creerCompte(String clientId, TypeCompte type) throws TypeInvalideException;
 
     /** UC3 : Consulter la liste des comptes (retourne des DTO) */
     public abstract List<CompteDTO> listerComptes(String clientId);

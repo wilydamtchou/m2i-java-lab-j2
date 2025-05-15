@@ -9,6 +9,8 @@ public class Client {
     private String prenom;
     private String email;
     private String telephone;
+    private String username;
+    private String password;
 
     public Client() {
         this.id = IdUtil.generateId();

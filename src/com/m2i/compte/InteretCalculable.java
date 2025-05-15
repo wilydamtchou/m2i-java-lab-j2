@@ -2,10 +2,11 @@ package com.m2i.compte;
 
 public interface InteretCalculable {
 
-    double calculerInteret();
+    abstract double calculerInteret();
 
     default void afficherInteret() {
         System.out.println("Intérêt calculé : " + calculerInteret());
+        tauxParDefaut();
     }
 
     private static double tauxParDefaut() {
@@ -13,6 +14,8 @@ public interface InteretCalculable {
     }
 
     static double getTauxParDefaut() {
+    	  tauxParDefaut();
         return tauxParDefaut();
+      
     }
 }

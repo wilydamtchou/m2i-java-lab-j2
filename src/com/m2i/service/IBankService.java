@@ -6,6 +6,9 @@ import com.m2i.client.Client;
 import com.m2i.compte.Compte;
 import com.m2i.compte.TypeCompte;
 import com.m2i.dto.CompteDTO;
+import com.m2i.dto.Report;
+import com.m2i.dto.TransactionSummary;
+import com.m2i.service.BankService.TransactionListener;
 import com.m2i.transaction.Transaction;
 import com.m2i.transaction.TypeTransaction;
 
@@ -33,5 +36,13 @@ public interface IBankService {
 
     /** UC4-ter : Retirer de l'argent */
     public Transaction retirer(String numeroCompte, double montant);
+    
+    public void addListener(TransactionListener l);
+    
+    public List<TransactionSummary> filtrerEtMapper(List<Transaction> txs, double seuil);
+    
+    public double calculerSolde(List<Transaction> txs);
+    
+    public Report syntheseTransactions(List<Transaction> txs);
 }
 

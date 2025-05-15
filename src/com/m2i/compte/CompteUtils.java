@@ -1,0 +1,20 @@
+package com.m2i.compte;
+
+public final class CompteUtils {
+
+    private CompteUtils() { /* empêche l'instanciation */ }
+
+    /**
+     * Retourne un libellé humain pour chaque type de compte.
+     * Utilise switch à flèches et yield pour plus de concision.
+     */
+    public static String labelTypeCompte(TypeCompte type) {
+        return switch (type) {
+            case COURANT -> "Compte courant";
+            case EPARGNE -> "Compte épargne";
+            case PEL     -> "Plan épargne logement";
+            // si un nouveau TypeCompte est ajouté ailleurs, on le signale :
+            default -> throw new IllegalStateException("Type de compte inconnu : " + type);
+        };
+    }
+}

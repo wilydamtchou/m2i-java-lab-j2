@@ -1,41 +1,60 @@
 package com.m2i.application;
 
+import java.util.List;
+
 import com.m2i.client.Client;
-import com.m2i.compte.Compte;
 import com.m2i.compte.CompteCourant;
-import com.m2i.compte.CompteEpargne;
+import com.m2i.compte.CompteUtils;
 import com.m2i.compte.TypeCompte;
-import com.m2i.compte.ICompte;
-import com.m2i.service.IBankService;
+import com.m2i.dto.Report;
+import com.m2i.dto.TransactionSummary;
 import com.m2i.service.BankService;
+import com.m2i.service.IBankService;
+import com.m2i.transaction.Transaction;
 
 public class M2iBankApplication {
-	public static void main (String[] args) {
-		IBankService bankService = new BankService();
-		
-		System.out.println("Welcome to M2I Bank...");
-		
-		System.out.println("Chargement des clients...");
-		
-		System.out.println("Dupont Jean");
-		Client dupont = bankService.creerClient ("Dupont", "Jean", "jean.dupont@example.com", "+33612345678");
-		System.out.println("Chargement des comptes");
-		CompteCourant crDupont = (CompteCourant) bankService.creerCompte(dupont.getId(), TypeCompte.COURANT);
-		Compte epDupont =  bankService.creerCompte(dupont.getId(), TypeCompte.EPARGNE);
-		
-		System.out.println("John Doe");
-		Client john = bankService.creerClient ("John", "Doe", "john.doe@example.com", "+33655345679");
-		System.out.println("Chargement des comptes");
-		CompteCourant crJohn = (CompteCourant) bankService.creerCompte(john.getId(), TypeCompte.COURANT);
-		Compte epJohn = bankService.creerCompte(john.getId(), TypeCompte.EPARGNE);
+    public static void main(String[] args) {
+        IBankService bankService = new BankService();
 
-        bankService.deposer(crJohn.getNumeroCompte(), 1000.0);
+        // Listener anonyme pour alerter sur les gros montants
+        bankService.addListener(new BankService.TransactionListener() {
+            @Override
+            public void onTransaction(Transaction tx) {
+                if (tx.getMontant() > 1000) {
+                    System.out.println("⚠️ Alerte gros montant : " + tx);
+                }
+            }
+        });
+
+        Client dupont = bankService.creerClient("Dupont", "Jean", "jean.dupont@example.com", "+33612345678");
+        CompteCourant crDupont = (CompteCourant) bankService.creerCompte(dupont.getId(), TypeCompte.COURANT);
+
+        // Dépôts/retraits déclenchent les notifications
         bankService.deposer(crDupont.getNumeroCompte(), 1500.0);
-        bankService.retirer(crDupont.getNumeroCompte(), 700.0);
         
-        crJohn.afficherDetails();
-        crDupont.afficherDetails();
         
-	}
+        List<Transaction> toutesTx = bankService.listerTransactions(crDupont.getNumeroCompte());
 
+	     // 1) Filtrer et obtenir les résumés des transactions > 100
+	     List<TransactionSummary> grandesTx = bankService.filtrerEtMapper(toutesTx, 100.0);
+	     grandesTx.forEach(System.out::println);  // vérifiez que chaque montant > 100
+	
+	     // 2) Calculer le solde à partir de l’historique complet
+	     double soldeCalcule = bankService.calculerSolde(toutesTx);
+	     System.out.println("Solde calculé via stream : " + soldeCalcule);
+	     
+	     
+	     for (TypeCompte t : TypeCompte.values()) {
+	            System.out.printf("%s → %s%n", t, CompteUtils.labelTypeCompte(t));
+	        }
+	     
+	     // Récupérer l’historique complet d’un compte
+	        String numCompte = crDupont.getNumeroCompte();
+	        List<Transaction> historique = bankService.listerTransactions(numCompte);
+
+	        // Générer et afficher le rapport
+	        Report rapport = ((BankService) bankService).syntheseTransactions(historique);
+	        System.out.println("=== Rapport Transactions pour le compte " + numCompte + " ===");
+	        System.out.println(rapport);
+    }
 }

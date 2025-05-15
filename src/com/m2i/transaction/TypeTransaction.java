@@ -1,18 +1,16 @@
 package com.m2i.transaction;
 
 public enum TypeTransaction {
-	CREDIT("CR", +1, "Compte Courant"),
-    DEBIT ("DB", -1, "Compte Epargne"),
-    PEL ("DB", -1, "Plan Epargne Logement");
+	CREDIT("CR", +1),
+    DEBIT ("DB", -1),
+    PEL ("DB", -1);
 
     private final String code;
     private final int sens;
-    private final String label;
 
-    TypeTransaction(String code, int sens, String label) {
+    TypeTransaction(String code, int sens) {
         this.code  = code;
         this.sens  = sens;
-        this.label = label;
     }
 
     public String getCode() {
@@ -21,10 +19,6 @@ public enum TypeTransaction {
 
     public int getSens() {
         return sens;
-    }
-    
-    public String getLabel() {
-        return label;
     }
 
     /**

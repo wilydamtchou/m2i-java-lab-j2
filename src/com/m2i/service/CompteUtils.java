@@ -1,7 +1,6 @@
 package com.m2i.service;
 
 import com.m2i.compte.TypeCompte;
-import com.m2i.transaction.TypeTransaction;
 
 public class CompteUtils {
 	private CompteUtils() { /* empêche l'instanciation */ }
@@ -11,9 +10,6 @@ public class CompteUtils {
      * Utilise switch à flèches et yield pour plus de concision.
      */
     public static String labelTypeCompte(TypeCompte type) {
-    	TypeTransaction t = TypeTransaction.CREDIT;
-    	t.getLabel();
-    	t.getCode();
         return switch (type) {
             case COURANT -> {
             	System.out.print(false);
